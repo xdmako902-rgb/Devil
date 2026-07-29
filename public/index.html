@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAKO MD 🦋</title>
+<title>MAKO MD 🦋 - Pair Code</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -187,9 +187,9 @@ h1:last-of-type {
 }
 
 #codeBox {
-    letter-spacing: 4px;
+    letter-spacing: 3px;
     color: #fff;
-    cursor: default;
+    cursor: pointer;
 }
 
 .badge-group {
@@ -229,7 +229,7 @@ h1:last-of-type {
 
 <!-- Input with RGB Border -->
 <div class="rgb-box">
-    <input type="text" id="number" placeholder="94xxxxxxxxx">
+    <input type="text" id="number" placeholder="947xxxxxxxx">
 </div>
 
 <!-- Button with RGB Border -->
@@ -278,17 +278,21 @@ async function getCode() {
         const data = await res.json();
         
         if (data.code) {
-            codeBox.style.letterSpacing = "4px";
-            codeBox.style.color = "#fff";
-            codeBox.innerText = data.code;
+            codeBox.style.letterSpacing = "3px";
+            codeBox.style.color = "#00ff88";
+            let formattedCode = data.code.includes('-') ? data.code : data.code.match(/.{1,4}/g)?.join('-') || data.code;
+            codeBox.innerText = formattedCode;
         } else if (data.error) {
+            codeBox.style.letterSpacing = "normal";
             codeBox.style.color = "#ff4d6d";
             codeBox.innerText = data.error;
         } else {
+            codeBox.style.letterSpacing = "normal";
             codeBox.style.color = "#ff4d6d";
-            codeBox.innerText = "SERVER FULL";
+            codeBox.innerText = "SERVER ERROR";
         }
     } catch (e) {
+        codeBox.style.letterSpacing = "normal";
         codeBox.style.color = "#ff4d6d";
         codeBox.innerText = "CONNECTION FAILED";
     }
@@ -303,4 +307,4 @@ document.getElementById("number").addEventListener("keydown", function(e) {
 </script>
 
 </body>
-   </html>
+    </html>
