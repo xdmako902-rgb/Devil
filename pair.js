@@ -98,7 +98,10 @@ for (const cmd of events.commands) {
         }
     }
 }
+
+// Serve static files from 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
+
 const activeSockets = {};
 global.activeSockets = activeSockets;
 const keepAliveTimers = {};
@@ -139,7 +142,6 @@ async function restoreSession(sessionId, sessionPath) {
         return false;
     }
 }
-
 
 async function saveSession(sessionId, sessionPath) {
     try {
@@ -256,13 +258,13 @@ async function Pair(number, res = null) {
         const { version } = await fetchLatestBaileysVersion(); 
         const logger = pino({ level: 'silent' });
 
-        
-const sock = makeWASocket({
-    auth: state,
-    logger: logger,
-    printQRInTerminal: false,
-    syncFullHistory: false
-});
+        const sock = makeWASocket({
+            auth: state,
+            logger: logger,
+            printQRInTerminal: false,
+            syncFullHistory: false,
+            browser: Browsers.ubuntu('Chrome')
+        });
         
         sock.ev.on('creds.update', saveCreds);
         activeSockets[sessionId] = sock;
@@ -314,7 +316,6 @@ const sock = makeWASocket({
                 const statusCode = lastDisconnect?.error?.output?.statusCode;
                 const isLoggedOut = statusCode === DisconnectReason.loggedOut;
                 cleanupSession(sessionId);
-                
                 
                 if (!isLoggedOut) {
                     reconnectTimers[sessionId] = setTimeout(() => Pair(number), 5000);
@@ -587,7 +588,10 @@ app.get('/pair', async (req, res) => {
     await Pair(number, res);
 });
 
-app.get('/', (req, res) => res.send('Bots Server Running!'));
+// Main Page Route - serves index.html from public folder
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 app.listen(PORT, async () => {
     console.log(`Server running on port ${PORT}`);
